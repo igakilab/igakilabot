@@ -1,7 +1,7 @@
 #
 # robots
 #
-jsonUrl = "https://raw.githubusercontent.com/koike-marshmallow/wcatGachameta/master/gachameta.json"
+jsonUrl = "https://raw.githubusercontent.com/igakilab/igakilabot-info/master/wcatgacha/gachameta.json"
 
 module.exports = (robot) ->
   robot.respond /(白猫.*(11|単)|白猫)/, (res) ->
