@@ -5,28 +5,34 @@ memberJsonUrl = "https://raw.githubusercontent.com/igakilab/igakilabot-info/mast
 
 module.exports = (robot) ->
 
-    robot.respond /show\smember\srules/i, (res) ->
-      members.httpGetMemberData robot, memberJsonUrl, (er, rs, data) ->
-        if er
-          res.send "error: #{er}"
-        else
-          for mb in data
-            buffer = ""
-            buffer += "tokens: #{members.arrayToRegs mb.tokens}\n"
-            buffer += "messages: \n"
-            for msg in mb.messages
-              buffer += "  #{msg}\n"
-            res.send buffer
-        return
+  httpget = require './module/httpget.coffee'
 
-    members.httpGetMemberData robot, memberJsonUrl, (er, rs, data) ->
+
+  httpget.httpGetJson robot, memberJsonUrl, (er, rs, data) ->
+    if er
+      res.send "error: #{er}"
+    else
+      reg = members.createRegex data
+      robot.hear reg, (res) ->
+        msglist = members.getMemberMessages data, res.match
+        res.send res.random(msglist)
+
+
+
+  robot.respond /show\smember\srules/i, (res) ->
+    httpget.httpGetJson robot, memberJsonUrl, (er, rs, data) ->
       if er
-        console.error er
+        res.send "error: #{er}"
       else
-        regex = members.createRegex data
-        robot.hear regex, (res) ->
-          msgs = members.getMemberMessages data, res.match
-          res.send res.random(msgs)
+        for mb in data
+          buffer = ""
+          buffer += "tokens: #{members.arrayToRegs mb.tokens}\n"
+          buffer += "messages: \n"
+          for msg in mb.messages
+            buffer += "  #{msg}\n"
+          res.send buffer
+      return
+
 
 #
 # modules
@@ -54,18 +60,3 @@ members =
       if regex.test(str)
         return mem.messages
     return ["not found"]
-
-  httpGetMemberData: (robot, url, callback) ->
-    req = robot.http(url).get()
-    req (err, res, body) ->
-      if err
-        callback err, res, null
-      else
-        data = null
-        try
-          data = JSON.parse body
-        catch error
-          callback error, res, null
-          return
-        callback err, res, data
-    return
