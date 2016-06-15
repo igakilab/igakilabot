@@ -5,7 +5,7 @@ module.exports = (robot) ->
   robot.respond /電車/i, (msg) ->
 
     # send HTTP request
-    baseUrl = 'http://transit.loco.yahoo.co.jp/traininfo/gc/13/'
+    baseUrl = 'http://transit.yahoo.co.jp/traininfo/gc/27/'
 
     cheerio.fetch baseUrl, (err, $, res) ->
       if $('.elmTblLstLine.trouble').find('a').length == 0
