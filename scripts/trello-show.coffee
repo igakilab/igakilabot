@@ -1,3 +1,11 @@
+# Description:
+#   trelloからタスクボードの内容を取ってくるスクリプトです
+#
+# Commadns:
+#   タスク - ボードのリストとカードを一覧表示
+#   trello test - trelloへの接続を試行、自身のアカウントの情報を取得
+#   trellogetcmd <cmd> - <cmd>で指定されたアドレスへGETリクエストを投げる
+
 # trello api key 67ad72d3feb45f7a0a0b3c8e1467ac0b
 # trello api token 268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938fd65
 
