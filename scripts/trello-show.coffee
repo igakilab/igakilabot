@@ -9,11 +9,12 @@
 # trello api key 67ad72d3feb45f7a0a0b3c8e1467ac0b
 # trello api token 268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938fd65
 
+Trello = require 'node-trello'
+
 TRELLO_API_KEY = "67ad72d3feb45f7a0a0b3c8e1467ac0b"
 TRELLO_API_TOKEN = "268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938fd65"
-DEFAULT_BOARD = "slackbot-test"
-
-Trello = require 'node-trello'
+DEFAULT_BOARD = "slackbot"
+DEBUG = false
 
 getBoardByName = (client, boardName, callback) ->
   client.get "/1/members/me/boards", (err, data) ->
@@ -51,7 +52,7 @@ module.exports = (robot) ->
         if err then msg.send "エラーが発生しました(01)"; return
         msg.send "タスクボードだよ"
         for edata in data
-          console.log edata
+          if DEBUG then console.log edata
           msg.send "- #{edata.name} (#{edata.cards.length}) -"
           for card in edata.cards
             msg.send "\t○#{card.name}"
