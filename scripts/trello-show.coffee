@@ -44,7 +44,9 @@ taskMark = (listString) ->
 
 module.exports = (robot) ->
   robot.respond /trello test/i, (msg) ->
-    trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
+    apiKey = process.env.HUBOT_TRELLO_KEY
+    apiToken = process.env.HUBOT_TRELLO_TOKEN
+    trello = new Trello apiKey, apiToken
     trello.get "/1/members/me", (err, data) ->
       if err
         msg.send "保存に失敗しました"
