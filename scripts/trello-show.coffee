@@ -31,6 +31,16 @@ getListsByBoardId = (client, boardId, callback) ->
     if err then callback err, null; return
     callback err, data
 
+taskMark = (listString) ->
+  if listString is "todo"
+    return "○"
+  else if listString is "doing"
+    return "◎"
+  else if listString is "done"
+    return "●"
+  else
+    return "・"
+
 
 module.exports = (robot) ->
   robot.respond /trello test/i, (msg) ->
@@ -45,7 +55,7 @@ module.exports = (robot) ->
 
   robot.hear /タスク/, (msg) ->
     trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
-    getBoardByName trello, "slackbot-test", (err, data) ->
+    getBoardByName trello, DEFAULT_BOARD, (err, data) ->
       if err then msg.send "エラーが発生しました(00)"; return
       unless data? then msg.send "ボードが見つかりません"; return
       getListsByBoardId trello, data.id, (err, data) ->
@@ -54,8 +64,9 @@ module.exports = (robot) ->
         for edata in data
           if DEBUG then console.log edata
           msg.send "- #{edata.name} (#{edata.cards.length}) -"
+          mark = taskMark edata.name
           for card in edata.cards
-            msg.send "\t○#{card.name}"
+            msg.send "\t#{mark}#{card.name}"
 
 
 
