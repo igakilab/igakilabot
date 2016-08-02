@@ -55,7 +55,7 @@ module.exports = (robot) ->
       console.log data
       msg.send data
 
-  robot.hear /タスク/, (msg) ->
+  robot.respond /タスク/, (msg) ->
     trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
     getBoardByName trello, DEFAULT_BOARD, (err, data) ->
       if err then msg.send "エラーが発生しました(00)"; return
@@ -72,7 +72,7 @@ module.exports = (robot) ->
 
 
 
-  robot.hear /trellogetcmd (.*)/, (msg) ->
+  robot.respond /trellogetcmd (.*)/, (msg) ->
     trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
     cmd = msg.match[1]
     trello.get cmd, (err, data) ->
