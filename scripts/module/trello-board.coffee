@@ -71,3 +71,5 @@ class TrelloBoard
     url = "/1/cards/#{cardId}"
     options = {idList: listId}
     client.put url, options, callback
+
+module.exports = TrelloBoard
