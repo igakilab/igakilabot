@@ -46,10 +46,12 @@ class TrelloBoard
   getAllLists: () ->
     return this.data.lists
 
-  createList: (listName, callback) ->
+  createList: (listName, params, callback) ->
+    unless callback? then callback = params; params = null
     url = "/1/boards/#{this.data.id}/lists"
-    options = {name: listName}
-    this.client.post url, options, callback
+    params = params ? {}
+    params.name = listName
+    this.client.post url, params, callback
 
   getCard: (cardId) ->
     for card in this.data.cards
@@ -73,10 +75,13 @@ class TrelloBoard
   getAllCards: () ->
     return this.data.cards
 
-  createCard: (listId, cardName, callback) ->
+  createCard: (listId, cardName, params, callback) ->
+    unless callback? then callback = params; params = null
     url = "/1/cards"
-    options = {name: cardName, idList: listId}
-    this.client.post url, options, callback
+    params = params ? {}
+    params.name = cardName
+    params.idList = listId
+    this.client.post url, params, callback
 
   cardMoveTo: (cardId, listId, callback) ->
     url = "/1/cards/#{cardId}"

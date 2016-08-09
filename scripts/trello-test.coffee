@@ -39,8 +39,9 @@ module.exports = (robot) ->
     boardGet (board) ->
       list = board.getAllLists()[0]
       if list? then board.createCard list.id, cardName, echoData
+      #if list? then board.createCard list.id, cardName, {due: new Date()}, echoData
 
   robot.hear /tretes list (.*)/i, (msg) ->
     listName = msg.match[1]
     boardGet (board) ->
-      board.createList listName, echoData
+      board.createList listName, {pos: "bottom"}, echoData
