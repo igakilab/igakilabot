@@ -1,8 +1,11 @@
 Trello = require 'node-trello'
 TrelloBoard = require './module/trello-board'
+TrelloTools = require './module/hubot-trello-tools'
 
 BOARD_ID = "5791b6f247501b7202d6f9c7"
 BOARD_NAME = "slackbot-test"
+KANBAN_NAME = "test-kanban"
+ORGANIZATION_ID = "igakilab1"
 echoData = (err, data) ->
   if err then console.log "ERROR"; console.log err; return
   console.log data
@@ -45,3 +48,18 @@ module.exports = (robot) ->
     listName = msg.match[1]
     boardGet (board) ->
       board.createList listName, {pos: "bottom"}, echoData
+
+  robot.hear /tretes kanban (.*)/i, (msg) ->
+    boardName = msg.match[1]
+    TrelloTools.createKanban boardName, ORGANIZATION_ID, msg
+
+  robot.hear /tretes addtask (.*) (.*)/i, (msg) ->
+    boardName = msg.match[1]
+    cardName = msg.match[2]
+    TrelloTools.addCard boardName, cardName, msg
+
+  robot.hear /tretes movetask (.*) (.*) (.*)/i, (msg) ->
+    boardName = msg.match[1]
+    cardName = msg.match[2]
+    listName = msg.match[3]
+    TrelloTools.cardMoveTo boardName, cardName, listName, msg

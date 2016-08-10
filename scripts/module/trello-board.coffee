@@ -1,5 +1,5 @@
 class TrelloBoard
-  @getBoardData: (client, boardId, callback) ->
+  @getInstance: (client, boardId, callback) ->
     url = "/1/boards/#{boardId}"
     options = {lists: "all", cards:"all"}
     client.get url, options, (err, data) ->
@@ -7,7 +7,7 @@ class TrelloBoard
       board = new TrelloBoard client, data
       callback? err, board
 
-  @getBoardDataByName: (client, boardName, idOrg, callback) ->
+  @getInstanceByName: (client, boardName, idOrg, callback) ->
     unless callback? then callback = idOrg; idOrg = null
     url = if idOrg? then "/1/organizations/#{idOrg}/boards"
     else "/1/members/me/boards"
@@ -16,14 +16,17 @@ class TrelloBoard
       if err then callback? err, null; return
       for board in boards
         if board.name is boardName
-          TrelloBoard.getBoardData client, board.id, callback
+          TrelloBoard.getInstance client, board.id, callback
           return
       callback "board not found : #{boardName}", null
 
   @createBoard: (client, boardName, idOrg, callback) ->
     unless callback? then callback = idOrg; idOrg = null
     url = "/1/boards"
-    options = {name: boardName}
+    options =
+      name: boardName
+      defaultLists: "false"
+      prefs_permissionLevel: "org"
     if idOrg? then options.idOrganization = idOrg
     client.post url, options, callback
 

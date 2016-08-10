@@ -63,10 +63,10 @@ class HubotTrelloTools
 
   @cardMoveTo: (boardName, cardName, listName, msg) ->
     client = createClient();
-    TrelloBoard.getInstanceByName client, boardName, msg, (board) ->
+    getBoardByName client, boardName, msg, (board) ->
       card = board.getCardByName cardName
       unless card? then msg.send "カードが見つかりません: #{cardName}"; return
-      list = board.getListBYName listName
+      list = board.getListByName listName
       unless list? then msg.send "リストが見つかりません: #{listName}"; return
       board.cardMoveTo card.id, list.id, (err, data) ->
         if assertError err, msg then return
