@@ -29,6 +29,25 @@ getBoardByName = (client, boardName, msg, callback) ->
     callback board
 
 class HubotTrelloTool
+  @createKanban: (boardName, orgId, msg) ->
+    unless msg? then msg = orgId; orgId = null
+    client = createClient();
+    TrelloBoard.createBoard client, boardName, orgId,  (err, res) ->
+      if assertError err, msg then return
+      unless res.id?
+        assertError "ボード情報が取得できません", msg; return
+      board = new TrelloBoard client, res
+      func0_createList = (err, listNames, results) ->
+        if assertError err, msg then return
+        if listNames.length > 0
+          ln = listNames.shift()
+          board.createList ln, {pos: "bottom"}, (err, res) ->
+            results.push res
+            func0_createList err, listNames, results
+        else
+          msg.send "かんばんを作成しました#{board.data.name}"
+      func0_createList null, ["todo", "doing", "done"], []
+
   @addCard: (boardName, cardName, params, msg) ->
     unless msg? then msg = params; params = {}
     client = createClient();
