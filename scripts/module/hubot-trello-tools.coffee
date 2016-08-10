@@ -28,7 +28,7 @@ getBoardByName = (client, boardName, msg, callback) ->
     if assertError err, msg then return
     callback board
 
-class HubotTrelloTool
+class HubotTrelloTools
   @createKanban: (boardName, orgId, msg) ->
     unless msg? then msg = orgId; orgId = null
     client = createClient();
@@ -71,3 +71,6 @@ class HubotTrelloTool
       board.cardMoveTo card.id, list.id, (err, data) ->
         if assertError err, msg then return
         msg.send "カードを#{data.name}に移動しました"
+
+
+module.exports = HubotTrelloTools
