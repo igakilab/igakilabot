@@ -27,9 +27,9 @@ class TrelloBoardCollection
         return board
     return null
 
-  getBoardByName: (boardId) ->
+  getBoardByName: (boardName) ->
     for board in this.data
-      if board.name is boardId
+      if board.name is boardName
         return board
     return null
 

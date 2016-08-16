@@ -1,5 +1,6 @@
 Trello = require 'node-trello'
 TrelloBoard = require './trello-board'
+TrelloBoardCollection = require './trello-board-collection'
 
 ###
 リスト移動例:
@@ -71,6 +72,30 @@ class HubotTrelloTools
       board.cardMoveTo card.id, list.id, (err, data) ->
         if assertError err, msg then return
         msg.send "カードを#{data.name}に移動しました"
+
+  @printKanban: (boardName, orgId, msg) ->
+    unless msg? then msg = orgId; orgId = null
+    printBoard = (boardId, msg) ->
+      TrelloBoard.getInstance boardId, (err, board) ->
+        if assertError err, msg then return
+        lists = board.getAllLists()
+        for list in lists
+          cards = board.getCardsByListId list.id
+          msg.send "--- #{list.name} (#{cards.length}) ---"
+          for card in cards
+            msg.send "> #{card.name}"
+    getCollectionCallback = (err, collection) ->
+      if assertError err, msg then return
+      bdata = collection.getBoardByName boardName
+      if bdata?
+        printBoard bdata.id, msg
+      else
+        msg.send "かんばんがみつかりません"
+    client = createClient()
+    if orgId?
+      TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
+    else
+      TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
 
 module.exports = HubotTrelloTools
