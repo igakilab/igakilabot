@@ -34,6 +34,14 @@ class TrelloBoard
     this.client = client
     this.data = data
 
+  reload: (callback) ->
+    url = "/1/boards/#{this.data.id}"
+    options = {lists: "all", cards:"all"}
+    client.get url, options, (err, data) ->
+      if err then callback? err, null; return
+      this.data = data
+      callback? err, board
+
   getList: (listId) ->
     for list in this.data.lists
       if list.id is listId
