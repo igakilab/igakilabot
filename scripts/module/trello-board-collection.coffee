@@ -8,6 +8,7 @@ class TrelloBoardCollection
     client.get url, options, (err, data) ->
       if err then callback? err, null; return
       collection = new TrelloBoardCollection client, data
+      callback? err, collection
 
   @getInstanceByOrganization: (client, orgId, callback) ->
     url = "/1/organizations/#{orgId}/boards"
@@ -15,6 +16,7 @@ class TrelloBoardCollection
     client.get url, options, (err, data) ->
       if err then callback? err, null; return
       collection = new TrelloBoardCollection client, data, orgId
+      callback? err, collection
 
   constructor: (client, data, orgId) ->
     this.client = client
@@ -45,3 +47,6 @@ class TrelloBoardCollection
       params.idOrganization = this.organizationId
       pramas.prefs_permissionLevel = "org"
     client.post url, params, callback
+
+
+module.exports = TrelloBoardCollection

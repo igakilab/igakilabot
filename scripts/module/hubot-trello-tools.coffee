@@ -75,10 +75,12 @@ class HubotTrelloTools
 
   @printKanban: (boardName, orgId, msg) ->
     unless msg? then msg = orgId; orgId = null
+    client = createClient()
     printBoard = (boardId, msg) ->
-      TrelloBoard.getInstance boardId, (err, board) ->
+      TrelloBoard.getInstance client, boardId, (err, board) ->
         if assertError err, msg then return
         lists = board.getAllLists()
+        console.log lists
         for list in lists
           cards = board.getCardsByListId list.id
           msg.send "--- #{list.name} (#{cards.length}) ---"
@@ -91,7 +93,6 @@ class HubotTrelloTools
         printBoard bdata.id, msg
       else
         msg.send "かんばんがみつかりません"
-    client = createClient()
     if orgId?
       TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
     else
