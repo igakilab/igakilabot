@@ -71,7 +71,7 @@ class HubotTrelloTools
       unless list? then msg.send "リストが見つかりません: #{listName}"; return
       board.cardMoveTo card.id, list.id, (err, data) ->
         if assertError err, msg then return
-        msg.send "カードを#{data.name}に移動しました"
+        msg.send "カードを#{list.name}に移動しました"
 
   @printKanban: (boardName, orgId, msg) ->
     unless msg? then msg = orgId; orgId = null
