@@ -1,3 +1,12 @@
+# Description:
+#   hubot-trello-tools.coffeeをテストするスクリプトです。
+#
+# Commadns:
+#   createKanbanのテスト tretes kanban   <ボード名>
+#   addCardのテスト      tretes addtask  <ボード名> <タスク名>
+#   cardMoveToのテスト   tretes motetask <ボード名> <タスク名> <移動先リスト名>
+#   printKanbanのテスト  tretes show     <ボード名>
+
 Trello = require 'node-trello'
 TrelloBoard = require './module/trello-board'
 TrelloTools = require './module/hubot-trello-tools'
