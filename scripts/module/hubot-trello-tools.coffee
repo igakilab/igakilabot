@@ -30,6 +30,9 @@ getBoardByName = (client, boardName, msg, callback) ->
     callback board
 
 class HubotTrelloTools
+  # かんばんを作成します。
+  # - ボードを新規作成
+  # - 「todo」「doing」「done」のリストを追加
   @createKanban: (boardName, orgId, msg) ->
     unless msg? then msg = orgId; orgId = null
     client = createClient();
@@ -49,6 +52,7 @@ class HubotTrelloTools
           msg.send "かんばんを作成しました#{board.data.name}"
       func0_createList null, ["todo", "doing", "done"], []
 
+  #カードを新規作成します。
   @addCard: (boardName, cardName, params, msg) ->
     unless msg? then msg = params; params = {}
     client = createClient();
@@ -62,6 +66,7 @@ class HubotTrelloTools
       else
         msg.send "追加可能なリストがありません"
 
+  # カードを移動します。
   @cardMoveTo: (boardName, cardName, listName, msg) ->
     client = createClient();
     getBoardByName client, boardName, msg, (board) ->
@@ -73,6 +78,7 @@ class HubotTrelloTools
         if assertError err, msg then return
         msg.send "カードを#{list.name}に移動しました"
 
+  # 看板のタスクを一覧表示します。
   @printKanban: (boardName, orgId, msg) ->
     unless msg? then msg = orgId; orgId = null
     client = createClient()
