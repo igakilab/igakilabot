@@ -105,6 +105,8 @@ class HubotTrelloTools
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
+  # カードを追加します。そのとき、タスクの番号を自動的にふります。
+  # すでにcardName内に番号を指定していた場合は、それを上書きしません。
   @addNumberedCard: (boardName, cardName, params, msg) ->
     unless msg? then msg = params; params = {}
     client = createClient();
@@ -117,6 +119,7 @@ class HubotTrelloTools
       else
         msg.send "追加可能なリストがありません"
 
+  # カード番号でカードを識別して、目的のリストに移動させます。
   @cardMoveToByNumber: (boardName, taskNumber, listName, msg) ->
     client = createClient();
     getBoardByName client, boardName, msg, (board) ->
