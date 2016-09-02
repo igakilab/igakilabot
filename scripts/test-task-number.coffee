@@ -10,6 +10,7 @@ TrelloNumberedBoard = require './module/trello-numbered-board'
 API_KEY = process.env.HUBOT_TRELLO_KEY
 API_TOKEN= process.env.HUBOT_TRELLO_TOKEN
 BOARD_ID = "5791b6f247501b7202d6f9c7"
+LIST_ID = "5791b6f973756bf8354409b7"
 
 getTaskNumber = (str) ->
   matches = str.match /#([0-9]+)/i
@@ -48,3 +49,10 @@ module.exports = (robot) ->
       for card in cards
         num = TrelloNumberedBoard.parseNumber card.name
         msg.send "[#{num}] #{card.name}"
+
+  robot.hear /tnn add (.*)/i, (msg) ->
+    cardName = msg.match[1];
+    client = new Trello API_KEY, API_TOKEN
+    TrelloNumberedBoard.getInstance client, BOARD_ID, (err, board) ->
+      board.createNumberedCard LIST_ID, cardName, (err, res) ->
+        msg.send res

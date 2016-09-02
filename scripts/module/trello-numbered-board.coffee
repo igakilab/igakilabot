@@ -31,9 +31,10 @@ class TrelloNumberedBoard extends TrelloBoard
   reloadCards: (callback) ->
     url = "/1/boards/#{this.data.id}/cards"
     options = {}
-    client.get url, options, (err, data) ->
+    thisp = this
+    this.client.get url, options, (err, data) ->
       if err then callback? err, null; return
-      this.data.cards = data
+      thisp.data.cards = data
       callback? err, data
 
   getMaxNumber: () ->
@@ -60,13 +61,14 @@ class TrelloNumberedBoard extends TrelloBoard
 
   createNumberedCard: (listId, cardName, params, callback) ->
     unless callback? then callback = params; params = null
-    if TrelloNumberedBoard.parseNumber cardName isnt null
+    if TrelloNumberedBoard.parseNumber(cardName) isnt null
       this.createCard listId, cardName, params, callback
     else
+      thisp = this;
       this.reloadCards (err, res) ->
         if err then callback? err, null; return
-        num = this.getMaxNumber() + 1
-        this.createCard listId, "\##{num} $#{cardName}", params, callback
+        num = thisp.getMaxNumber() + 1
+        thisp.createCard listId, "\##{num} #{cardName}", params, callback
 
 
 module.exports = TrelloNumberedBoard

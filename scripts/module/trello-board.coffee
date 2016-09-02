@@ -37,9 +37,10 @@ class TrelloBoard
   reload: (callback) ->
     url = "/1/boards/#{this.data.id}"
     options = {lists: "all", cards:"all"}
-    client.get url, options, (err, data) ->
+    thisp = this
+    this.client.get url, options, (err, data) ->
       if err then callback? err, null; return
-      this.data = data
+      thisp.data = data
       callback? err, board
 
   getList: (listId) ->
