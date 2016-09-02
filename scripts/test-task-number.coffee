@@ -42,9 +42,9 @@ module.exports = (robot) ->
     TrelloNumberedBoard.getInstance client, BOARD_ID, (err, board) ->
       console.log board.data
 
-  robot.hear /tnn show/i, (msg) ->
+  robot.hear /tnn show (.*)/i, (msg) ->
     client = new Trello API_KEY, API_TOKEN
-    TrelloNumberedBoard.getInstance client, BOARD_ID, (err, board) ->
+    TrelloNumberedBoard.getInstanceByName client, msg.match[1], (err, board) ->
       cards = board.getAllCards();
       for card in cards
         num = TrelloNumberedBoard.parseNumber card.name

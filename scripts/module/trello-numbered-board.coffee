@@ -80,6 +80,7 @@ class TrelloNumberedBoard extends TrelloBoard
 
   # タスク番号でカードを検索します。
   getCardByNumber: (cardNumber) ->
+    cardNumber = cardNumber - 0
     for card in this.data.cards
       tmp = TrelloNumberedBoard.parseNumber card.name
       if tmp is cardNumber

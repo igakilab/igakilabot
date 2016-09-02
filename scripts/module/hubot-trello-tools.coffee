@@ -1,6 +1,7 @@
 Trello = require 'node-trello'
 TrelloBoard = require './trello-board'
 TrelloBoardCollection = require './trello-board-collection'
+TrelloNumberedBoard = require "./trello-numbered-board"
 
 ###
 リスト移動例:
@@ -25,7 +26,7 @@ assertError = (err, msg) ->
   return err
 
 getBoardByName = (client, boardName, msg, callback) ->
-  TrelloBoard.getInstanceByName client, boardName, (err, board) ->
+  TrelloNumberedBoard.getInstanceByName client, boardName, (err, board) ->
     if assertError err, msg then return
     callback board
 
@@ -103,6 +104,30 @@ class HubotTrelloTools
       TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
+
+  @addNumberedCard: (boardName, cardName, params, msg) ->
+    unless msg? then msg = params; params = {}
+    client = createClient();
+    getBoardByName client, boardName, msg, (board) ->
+      lists = board.getAllLists();
+      if lists.length > 0
+        board.createNumberedCard lists[0].id, cardName, params, (err, data) ->
+          if assertError err, msg then return
+          msg.send "カードを追加しました #{data.name}"
+      else
+        msg.send "追加可能なリストがありません"
+
+  @cardMoveToByNumber: (boardName, taskNumber, listName, msg) ->
+    client = createClient();
+    getBoardByName client, boardName, msg, (board) ->
+      card = board.getCardByNumber taskNumber
+      unless card? then msg.send "カードが見つかりません: No.#{taskNumber}"; return
+      list = board.getListByName listName
+      unless list? then msg.send "リストが見つかりません: #{listName}"; return
+      board.cardMoveTo card.id, list.id, (err, data) ->
+        if assertError err, msg then return
+        msg.send "カードを#{list.name}に移動しました"
+
 
 
 module.exports = HubotTrelloTools

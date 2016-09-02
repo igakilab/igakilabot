@@ -76,3 +76,14 @@ module.exports = (robot) ->
   robot.hear /tretes show (.*)/i, (msg) ->
     boardName = msg.match[1]
     TrelloTools.printKanban boardName, ORGANIZATION_ID, msg
+
+  robot.hear /tretesn addtask (.*) (.*)/i, (msg) ->
+    boardName = msg.match[1]
+    cardName = msg.match[2]
+    TrelloTools.addNumberedCard boardName, cardName, msg
+
+  robot.hear /tretesn movetask (.*) ([0-9]*) (.*)/i, (msg) ->
+    boardName = msg.match[1]
+    taskNumber = msg.match[2]
+    listName = msg.match[3]
+    TrelloTools.cardMoveToByNumber boardName, taskNumber, listName, msg
