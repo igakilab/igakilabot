@@ -25,10 +25,35 @@ assertError = (err, msg) ->
     msg.send err
   return err
 
+createKanban = (boardCollection, boardName, callback) ->
+  boardCollection.createBoard boardName, (err, res) ->
+    if err? then callback err, null; return
+    console.log res
+    board = new TrelloBoard boardCollection.client, res
+    func0_createList = (err, listNames, results) ->
+      if err? then callback err, null; return
+      if listNames.length > 0
+        ln = listNames.shift()
+        board.createList ln, {pos: "bottom"}, (err, res0) ->
+          results.push res0
+          func0_createList err, listNames, results
+      else
+        callback null, res
+    func0_createList null, ["todo", "doing", "done"], []
+
+
 getBoardByName = (client, boardName, msg, callback) ->
-  TrelloNumberedBoard.getInstanceByName client, boardName, (err, board) ->
+  TrelloBoardCollection.getInstanceByMember client, (err, collection) ->
     if assertError err, msg then return
-    callback board
+    board = collection.getBoardByName boardName
+    if board?
+      TrelloBoard.getInstance client, board.id, (err, board) ->
+        if assertError err, msg then return
+        callback board
+    else
+      createKanban collection, boardName, (err, res) ->
+        console.log res
+        msg.send "#{res.name}を作成しました"
 
 class HubotTrelloTools
   # かんばんを作成します。
@@ -57,13 +82,13 @@ class HubotTrelloTools
   @addCard: (boardName, cardName, params, msg) ->
     unless msg? then msg = params; params = {}
     client = createClient();
-    TrelloBoard.getInstanceByName client, boardName, (err, board) ->
-      if assertError err, msg then return
+    getBoardByName client, boardName, msg, (board) ->
       lists = board.getAllLists();
+      console.log lists
       if lists.length > 0
         board.createCard lists[0].id, cardName, params, (err, data) ->
           if assertError err, msg then return
-          msg.send "カードを追加しました #{data.name}"
+          msg.send "カードを作成しました#{data.name}"
       else
         msg.send "追加可能なリストがありません"
 
