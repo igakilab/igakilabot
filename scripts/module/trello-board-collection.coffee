@@ -69,7 +69,7 @@ class TrelloBoardCollection
     params.defaultLists = "false"
     if this.organizationId?
       params.idOrganization = this.organizationId
-      pramas.prefs_permissionLevel = params.prefs_permissionLevel ? "org"
+      params.prefs_permissionLevel = params.prefs_permissionLevel ? "org"
     this.client.post url, params, callback
 
 

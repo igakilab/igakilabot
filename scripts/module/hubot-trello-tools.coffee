@@ -3,6 +3,8 @@ TrelloBoard = require './trello-board'
 TrelloBoardCollection = require './trello-board-collection'
 TrelloNumberedBoard = require "./trello-numbered-board"
 
+ORGANIZATION_ID = "igakilab1"
+
 ###
 リスト移動例:
   trello = new Trello TRELLO_KEY, TRELLO_TOKEN
@@ -28,7 +30,6 @@ assertError = (err, msg) ->
 createKanban = (boardCollection, boardName, callback) ->
   boardCollection.createBoard boardName, (err, res) ->
     if err? then callback err, null; return
-    console.log res
     board = new TrelloBoard boardCollection.client, res
     func0_createList = (err, listNames, results) ->
       if err? then callback err, null; return
@@ -41,19 +42,38 @@ createKanban = (boardCollection, boardName, callback) ->
         callback null, res
     func0_createList null, ["todo", "doing", "done"], []
 
+getCollection = (client, orgId, callback) ->
+  unless callback? then callback = orgId; orgId = null;
+  if orgId?
+    TrelloBoardCollection.getInstanceByOrganization client, orgId, callback
+  else
+    TrelloBoardCollection.getInstanceByMember client, callback
 
 getBoardByName = (client, boardName, msg, callback) ->
-  TrelloBoardCollection.getInstanceByMember client, (err, collection) ->
+  getCollection client, ORGANIZATION_ID, (err, collection) ->
     if assertError err, msg then return
     board = collection.getBoardByName boardName
     if board?
-      TrelloBoard.getInstance client, board.id, (err, board) ->
+      TrelloNumberedBoard.getInstance client, board.id, (err, board) ->
+        if assertError err, msg then return
+        callback board
+    else
+      assertError "かんばんがみつかりません", msg; return
+
+getBoardByNameAutoCreate = (client, boardName, msg, callback) ->
+  getCollection client, ORGANIZATION_ID, (err, collection) ->
+    if assertError err, msg then return
+    board = collection.getBoardByName boardName
+    if board?
+      TrelloNumberedBoard.getInstance client, board.id, (err, board) ->
         if assertError err, msg then return
         callback board
     else
       createKanban collection, boardName, (err, res) ->
-        console.log res
         msg.send "#{res.name}を作成しました"
+        TrelloNumberedBoard.getInstance client, res.id, (err, board) ->
+          if assertError err, msg then return
+          callback board
 
 class HubotTrelloTools
   # かんばんを作成します。
@@ -82,7 +102,7 @@ class HubotTrelloTools
   @addCard: (boardName, cardName, params, msg) ->
     unless msg? then msg = params; params = {}
     client = createClient();
-    getBoardByName client, boardName, msg, (board) ->
+    getBoardByNameAutoCreate client, boardName, msg, (board) ->
       lists = board.getAllLists();
       console.log lists
       if lists.length > 0
@@ -112,7 +132,6 @@ class HubotTrelloTools
       TrelloBoard.getInstance client, boardId, (err, board) ->
         if assertError err, msg then return
         lists = board.getAllLists()
-        console.log lists
         for list in lists
           cards = board.getCardsByListId list.id
           msg.send "--- #{list.name} (#{cards.length}) ---"
@@ -135,7 +154,7 @@ class HubotTrelloTools
   @addNumberedCard: (boardName, cardName, params, msg) ->
     unless msg? then msg = params; params = {}
     client = createClient();
-    getBoardByName client, boardName, msg, (board) ->
+    getBoardByNameAutoCreate client, boardName, msg, (board) ->
       lists = board.getAllLists();
       if lists.length > 0
         board.createNumberedCard lists[0].id, cardName, params, (err, data) ->
