@@ -74,7 +74,7 @@ class TrelloNumberedBoard extends TrelloBoard
   getCardByName: (cardName) ->
     for card in this.data.cards
       tmp = TrelloNumberedBoard.parseCardName card.name
-      if tmp is name
+      if tmp is cardName
         return card
     return null
 
