@@ -1,3 +1,5 @@
+Trello = require 'node-trello'
+
 module.exports =
   trello:
     key: "67ad72d3feb45f7a0a0b3c8e1467ac0b"
@@ -5,4 +7,9 @@ module.exports =
     dataPrinter: (err, data) ->
       if err then console.log "ERROR"; console.log err; return
       console.log data
-    
+    createClient: () ->
+      return new Trello this.key, this.token
+
+  req:
+    Trello: require 'node-trello'
+    TrelloBoardCollection: require './trello-board-collection'

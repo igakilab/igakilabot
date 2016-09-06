@@ -53,9 +53,9 @@ class TrelloBoardCollection
         return board
     return null
 
-  getBoardByName: (boardName) ->
+  getBoardByName: (boardName, includeClosed = false) ->
     for board in this.data
-      if board.name is boardName
+      if board.name is boardName and (includeClosed or !board.closed)
         return board
     return null
 
