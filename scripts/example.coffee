@@ -10,6 +10,12 @@
 
 module.exports = (robot) ->
 
+  robot.hear /echo res/i, (res) ->
+    res.send "user-id: #{res.message.user.id}"
+    res.send "user-name: #{res.message.user.name}"
+    res.send "room: #{res.message.room}"
+    res.send "text: #{res.message.text}"
+
   # robot.hear /badger/i, (res) ->
   #   res.send "Badgers? BADGERS? WE DON'T NEED NO STINKIN BADGERS"
   #
