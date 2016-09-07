@@ -168,6 +168,9 @@ class HubotTrelloTools
         if assertError err, msg then return
         msg.send "カードを#{list.name}に移動しました"
 
+  @parseTaskNumber: (str) ->
+    return TrelloNumberedBoard.parseNumber str
+
 
 
 module.exports = HubotTrelloTools

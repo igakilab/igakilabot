@@ -55,6 +55,15 @@ module.exports = (robot) ->
       console.log data
       msg.send data
 
+  robot.respond /trellogetcmd (.*)/, (msg) ->
+    trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
+    cmd = msg.match[1]
+    trello.get cmd, (err, data) ->
+      if err then msg.send "保存に失敗しました"; return
+      console.log data
+      msg.send data
+
+###
   robot.respond /タスク/, (msg) ->
     trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
     getBoardByName trello, DEFAULT_BOARD, (err, data) ->
@@ -69,13 +78,4 @@ module.exports = (robot) ->
           mark = taskMark edata.name
           for card in edata.cards
             msg.send "\t#{mark}#{card.name}"
-
-
-
-  robot.respond /trellogetcmd (.*)/, (msg) ->
-    trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
-    cmd = msg.match[1]
-    trello.get cmd, (err, data) ->
-      if err then msg.send "保存に失敗しました"; return
-      console.log data
-      msg.send data
+###
