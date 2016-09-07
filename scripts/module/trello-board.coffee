@@ -85,6 +85,7 @@ class TrelloBoard
     unless callback? then callback = params; params = null
     url = "/1/boards/#{this.data.id}/lists"
     params = params ? {}
+    console.log url
     params.name = listName
     this.client.post url, params, callback
 
