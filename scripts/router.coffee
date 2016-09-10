@@ -20,17 +20,15 @@ module.exports = (robot) ->
     else
       res.end "messages undefined : #{req.body.room} #{req.body.message}"
 
+
   robot.router.post "/hubot/dajare", (req, res) ->
     if req.body.room?
-      Dajare.getDajareList (err, list) ->
-        if err? then res.end "取得できませんでした"; return
-        if list.length > 0
-          msg = ""
-          if req.body.message? then msg = req.body.message + "\n";
-          msg += list[Math.floor(Math.random() * list.length)]
-          robot.send {room:req.body.room}, msg
-          res.end "ダジャレを送信しました\n room:#{req.body.room}\n msg:#{msg}"
-        else
-          res.end "送信できるダジャレがありません"
+      Dajare.random (err, dajare) ->
+        if err? then res.end "エラーが発生しました"; return
+        msg = ""
+        if req.body.message? then msg = req.body.message + "\n";
+        msg += dajare
+        robot.send {room:req.body.room}, msg
+        res.end "ダジャレを送信しました\n room:#{req.body.room}\n msg:#{msg}"
     else
       res.end "送信先を指定してください。"
