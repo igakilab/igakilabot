@@ -26,6 +26,7 @@ module.exports = (robot) ->
     if num?
       TrelloTools.cardMoveToByNumber room, num, "doing", msg
     else
+      TrelloTools.setAssign room, title, msg
       TrelloTools.cardMoveTo room, title, "doing", msg
 
   robot.respond /(.*)が終わり/i, (msg) ->

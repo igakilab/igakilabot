@@ -171,6 +171,13 @@ class HubotTrelloTools
   @parseTaskNumber: (str) ->
     return TrelloNumberedBoard.parseNumber str
 
-
+  @setAssign = (boardName, cardName, msg) ->
+    client = createClient();
+    getBoardByName client, boardName, false, msg, (board) ->
+      lists = board.getAllLists();
+      if lists.length > 0
+        card = board.getCardByName cardName
+        if card.length > 0
+          board.setAssign card.id, msg.message.name
 
 module.exports = HubotTrelloTools

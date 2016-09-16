@@ -129,4 +129,15 @@ class TrelloBoard
     options = {idList: listId}
     this.client.put url, options, callback
 
+  getMemberId: (boardId, userName, callback) ->
+    for tar in this.data.members
+      if tar.fullName is userName
+        return tar
+    return null
+    
+  setAssign: (cardId, userId, callback) ->
+    url = "/1/cards/#{cardId}/idMembers"
+    value = {value: userId}
+    this.client.post url, value, callback
+
 module.exports = TrelloBoard
