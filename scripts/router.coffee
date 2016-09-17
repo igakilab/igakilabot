@@ -7,6 +7,7 @@
 #                              json形式で、roomとmessageを指定する必要があります
 
 Dajare = require './module/dajare'
+TrelloTools = require "./module/hubot-trello-tools"
 
 module.exports = (robot) ->
   robot.router.get "/hubot/gettest/", (req, res) ->
@@ -19,6 +20,16 @@ module.exports = (robot) ->
       res.end "send to #{req.body.room} : #{req.body.message}"
     else
       res.end "messages undefined : #{req.body.room} #{req.body.message}"
+
+
+  robot.router.post "/hubot/task_notify", (req, res) ->
+    if req.body.room?
+      TrelloTools.kanbanString req.body.room, (err, res) ->
+        if err? then msg.send err; return
+        robot.send {room:req.body.room}, res
+      res.end "room: #{req.body.room}"
+    else
+      res.end "room name is undefined"
 
 
   robot.router.post "/hubot/dajare", (req, res) ->
