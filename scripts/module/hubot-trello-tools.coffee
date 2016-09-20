@@ -142,6 +142,35 @@ class HubotTrelloTools
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
+  # 看板の一覧を改行を含む文字列として返却します。
+  @kanbanString: (boardName, orgId, callback) ->
+    unless callback? then callback = orgId; orgId = null
+    client = createClient()
+    printBoard = (boardId, callback) ->
+      TrelloBoard.getInstance client, boardId, (err, board) ->
+        if err? then callback err, null; return
+        str = "";
+        lists = board.getAllLists()
+        for list in lists
+          cards = board.getCardsByListId list.id
+          str += "--- #{list.name} (#{cards.length}) ---\n"
+          for card in cards
+            str += "> #{card.name}\n"
+        callback null, str
+    getCollectionCallback = (err, collection) ->
+      if err? then callback err, null; return
+      bdata = collection.getBoardByName boardName
+      if bdata?
+        printBoard bdata.id, callback
+      else
+        callback "かんばんがみつかりません", null
+    if orgId?
+      TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
+    else
+      TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
+
+
+
   # カードを追加します。そのとき、タスクの番号を自動的にふります。
   # すでにcardName内に番号を指定していた場合は、それを上書きしません。
   @addNumberedCard: (boardName, cardName, params, msg) ->
