@@ -20,22 +20,22 @@ module.exports = (robot) ->
     TrelloTools.addNumberedCard room, title, msg
 
   robot.respond /今から(.*)/i, (msg) ->
-    title = msg.match[1]
-    num = TrelloTools.parseTaskNumber msg.match[1]
-    room = msg.message.room
-    if num?
-      TrelloTools.cardMoveToByNumber room, num, "doing", msg
-    else
-      TrelloTools.cardMoveTo room, title, "doing", msg
+    arrCards = msg.match[1].split("\s")
+    for val, i in arrCards
+      title = val
+      num = TrelloTools.parseTaskNumber val
+      room = msg.message.room
+      if num?
+      else
 
   robot.respond /(.*)が終わり/i, (msg) ->
-    title = msg.match[1]
-    num = TrelloTools.parseTaskNumber msg.match[1]
-    room = msg.message.room
-    if num?
-      TrelloTools.cardMoveToByNumber room, num, "done", msg
-    else
-      TrelloTools.cardMoveTo room, title, "done", msg
+    arrCards = msg.match[1].split("\s")
+    for val, i in arrCards
+      title = val
+      num = TrelloTools.parseTaskNumber val
+      room = msg.message.room
+      if num?
+      else
 
   robot.respond /タスク.*表示/i, (msg) ->
     room = msg.message.room
