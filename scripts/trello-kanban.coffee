@@ -26,7 +26,9 @@ module.exports = (robot) ->
       num = TrelloTools.parseTaskNumber val
       room = msg.message.room
       if num?
+        TrelloTools.cardMoveToByNumber room, num, "doing", msg
       else
+        TrelloTools.cardMoveTo room, title, "doing", msg
 
   robot.respond /(.*)が終わり/i, (msg) ->
     arrCards = msg.match[1].split("\s")
@@ -35,7 +37,9 @@ module.exports = (robot) ->
       num = TrelloTools.parseTaskNumber val
       room = msg.message.room
       if num?
+        TrelloTools.cardMoveToByNumber room, num, "done", msg
       else
+        TrelloTools.cardMoveTo room, title, "done", msg
 
   robot.respond /タスク.*表示/i, (msg) ->
     room = msg.message.room
