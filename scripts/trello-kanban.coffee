@@ -20,7 +20,7 @@ module.exports = (robot) ->
     TrelloTools.addNumberedCard room, title, msg
 
   robot.respond /今から(.*)/i, (msg) ->
-    arrCards = msg.match[1].split("\s")
+    arrCards = msg.match[1].split(",")
     for val, i in arrCards
       title = val
       num = TrelloTools.parseTaskNumber val
@@ -31,7 +31,7 @@ module.exports = (robot) ->
         TrelloTools.cardMoveTo room, title, "doing", msg
 
   robot.respond /(.*)が終わり/i, (msg) ->
-    arrCards = msg.match[1].split("\s")
+    arrCards = msg.match[1].split(",")
     for val, i in arrCards
       title = val
       num = TrelloTools.parseTaskNumber val
