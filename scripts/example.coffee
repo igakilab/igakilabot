@@ -13,6 +13,7 @@ module.exports = (robot) ->
   robot.hear /echo user/i, (res) ->
     res.send "user-id: #{res.message.user.id}"
     res.send "user-name: #{res.message.user.name}"
+    res.send "bot-host: #{(process.env.HOSTNAME ? process.env.COMPUTERNAME ? "unknown")}"
     res.send "room: #{res.message.room}"
     res.send "text: #{res.message.text}"
 
