@@ -122,14 +122,19 @@ class HubotTrelloTools
     unless msg? then msg = orgId; orgId = null
     client = createClient()
     printBoard = (boardId, msg) ->
+      message = ""
+      msgadd = (row) ->
+        if message.length > 0 then message += "\n"
+        message += row
       TrelloBoard.getInstance client, boardId, (err, board) ->
         if assertError err, msg then return
         lists = board.getAllLists()
         for list in lists
           cards = board.getCardsByListId list.id
-          msg.send "--- #{list.name} (#{cards.length}) ---"
+          msgadd "--- #{list.name} (#{cards.length}) ---"
           for card in cards
-            msg.send "> #{card.name}"
+            msgadd "> #{card.name}"
+        msg.send message
     getCollectionCallback = (err, collection) ->
       if assertError err, msg then return
       bdata = collection.getBoardByName boardName
