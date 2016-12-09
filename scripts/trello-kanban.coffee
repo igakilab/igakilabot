@@ -47,6 +47,10 @@ module.exports = (robot) ->
     room = msg.message.room
     TrelloTools.printKanban room, msg
 
+  robot.respond /testd/i, (msg) ->
+    room = msg.message.room
+    TrelloTools.cardString room, msg
+
   robot.respond /タスクヘルプ/i, (msg) ->
     desc = [
       "トレロと連携しているかんばんタスク管理です。"

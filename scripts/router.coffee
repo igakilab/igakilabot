@@ -31,6 +31,14 @@ module.exports = (robot) ->
     else
       res.end "room name is undefined"
 
+  robot.router.post "/hubot/task_notify", (req, res) ->
+    if req.body.room?
+      TrelloTools.cardString req.body.room, (err, res) ->
+        if err? then msg.send err; return
+        robot.send {room:req.body.room}, res
+      res.end "room: #{req.body.room}"
+    else
+      res.end "room name is undefined"
 
   robot.router.post "/hubot/dajare", (req, res) ->
     if req.body.room?
