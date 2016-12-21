@@ -12,12 +12,22 @@
 # trello api token 268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938fd65
 
 TrelloTools = require './module/hubot-trello-tools'
+urlBase = 'http://150.89.234.253:8096/'
 
 module.exports = (robot) ->
   robot.respond /(.*)を追加/i, (msg) ->
     title = msg.match[1]
     room = msg.message.room
     TrelloTools.addNumberedCard room, title, msg
+    card = TrelloTools.parseCard title
+    robot.brain.data "setcard", card
+    msg.send "追加したカードを今のイテレーションに追加しますか？"
+
+  robot.respond /(.*)はい/i, (msg) ->
+    card = robot.brain.get "setcard"
+    boardId = TrelloTools.parseBoard msg.message.room
+        msg.send "カードをイテレーションに追加しました"
+
 
   robot.respond /今から(.*)/i, (msg) ->
     arrCards = msg.match[1].trim().split /\s+/
@@ -42,6 +52,7 @@ module.exports = (robot) ->
         TrelloTools.cardMoveToByNumber room, num, "done", msg
       else
         TrelloTools.cardMoveTo room, title, "done", msg
+    TrelloTools.nokoriString room, msg
 
   robot.respond /タスク.*表示/i, (msg) ->
     room = msg.message.room
