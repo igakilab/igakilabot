@@ -254,6 +254,16 @@ class HubotTrelloTools
   @parseTaskNumber: (str) ->
     return TrelloNumberedBoard.parseNumber str
 
+  @parseCard: (str) ->
+    client = createClient()
+    getBoardByName client, str, false, msg, (board) ->
+      card = board.getCardByName str
+      return card
+
+  @parseBoard: (str) ->
+    client = createClient()
+    getBoardByName client, str, false, msg, (board) ->
+      return board.id
 
 
 module.exports = HubotTrelloTools
