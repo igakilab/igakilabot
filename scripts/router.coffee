@@ -23,14 +23,11 @@ module.exports = (robot) ->
 
 
   robot.router.post "/hubot/task_notify", (req, res) ->
-    if req.body.room?
-      TrelloTools.kanbanString req.body.room, (err, res) ->
-        if err? then msg.send err; return
-        robot.send {room:req.body.room}, res
-      res.end "room: #{req.body.room}"
+    if req.body.message? and req.body.room?
+      robot.send {room:req.body.room}, req.body.message
+      res.end "send to #{req.body.room} : #{req.body.message}"
     else
-      res.end "room name is undefined"
-
+      res.end "messages undefined : #{req.body.room} #{req.body.message}"
 
   robot.router.post "/hubot/dajare", (req, res) ->
     if req.body.room?
