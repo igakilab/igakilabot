@@ -256,6 +256,7 @@ class HubotTrelloTools
 
   @parseCard: (boardName, str, msg) ->
     client = createClient()
+    console.log msg
     getBoardByName client, boardName, false, msg, (board) ->
       card = board.getCardByName str
       return card
