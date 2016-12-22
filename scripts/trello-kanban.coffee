@@ -19,13 +19,14 @@ module.exports = (robot) ->
     title = msg.match[1]
     room = msg.message.room
     TrelloTools.addNumberedCard room, title, msg
-    card = TrelloTools.parseCard title
+    card = TrelloTools.parseCard title, msg
     robot.brain.data "setcard", card
     msg.send "追加したカードを今のイテレーションに追加しますか？"
 
   robot.respond /(.*)はい/i, (msg) ->
     card = robot.brain.get "setcard"
-    boardId = TrelloTools.parseBoard msg.message.room
+    if card is null 
+    boardId = TrelloTools.parseBoard msg.message.room, msg
     msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/'+boardId).get() (err, res, body) ->
       msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+boardId+'/'+card.id+'/'+"#{msg.message.user.name}").post() (err, res, body) ->
         msg.send "カードをイテレーションに追加しました"
