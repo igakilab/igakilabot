@@ -4,9 +4,9 @@ _ = require 'lodash'
 
 Trello = require 'node-trello'
 TrelloTools = require "./module/hubot-trello-tools"
-TrelloBoard = require './trello-board'
-TrelloBoardCollection = require './trello-board-collection'
-TrelloNumberedBoard = require "./trello-numbered-board"
+TrelloBoard = require './module/trello-board'
+TrelloBoardCollection = require './module/trello-board-collection'
+TrelloNumberedBoard = require "./module/trello-numbered-board"
 
 Emoji = {
 
@@ -48,7 +48,7 @@ module.exports = (robot) ->
       , Promise.resolve())
 
 
-  robot.adapter.client.on 'raw_message', (message) ->
+  robot.adapter.client?.on? 'raw_message', (message) ->
     robotUserId = robot.adapter.client.getUserByName(robot.name).id
     if (/^reaction_(added|removed)$/.test message.type) && (message.user isnt robotUserId)
       emojiKey = _.findKey Emoji, (emoji) -> emoji is message.reaction
@@ -79,6 +79,7 @@ module.exports = (robot) ->
     channelId = robot.adapter.client.getChannelGroupOrDMByName(msg.envelope.room)?.id
     genBtn('ok', channelId)
 
+###
   robot.router.post "/hubot/task_notify", (req, res) ->
     if req.body.room?
       TrelloTools.cardString req.body.room, (err, res) ->
@@ -89,3 +90,4 @@ module.exports = (robot) ->
       res.end "room: #{req.body.room}"
     else
       res.end "room name is undefined"
+###
