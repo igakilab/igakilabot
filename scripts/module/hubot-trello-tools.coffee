@@ -181,7 +181,7 @@ class HubotTrelloTools
       TrelloBoard.getInstance client, boardId, (err, board) ->
         if err? then callback err, null; return
         str = "";
-        list = [board.getListByName 'todo', board.getListByName 'doing']
+        lists = [board.getListByName 'todo', board.getListByName 'doing']
         for list in lists
           cards = board.getCardsByListId list.id
           str += "--- #{list.name} (#{cards.length}) ---\n"
