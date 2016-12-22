@@ -254,9 +254,9 @@ class HubotTrelloTools
   @parseTaskNumber: (str) ->
     return TrelloNumberedBoard.parseNumber str
 
-  @parseCard: (str, msg) ->
+  @parseCard: (boardName, str, msg) ->
     client = createClient()
-    getBoardByName client, str, false, msg, (board) ->
+    getBoardByName client, boardName, false, msg, (board) ->
       card = board.getCardByName str
       return card
 
