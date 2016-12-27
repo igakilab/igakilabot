@@ -29,7 +29,7 @@ module.exports = (robot) ->
     reqg = msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/'+boardId)
       .get()
     reqg (err, res, body) ->
-      reqp = msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+boardId+'/'+card.id+'/'+"#{msg.message.user.name}")
+      reqp = res.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+boardId+'/'+card.id+'/'+"#{msg.message.user.name}")
         .post()
       reqp (err, res, body) ->
         msg.send "カードをイテレーションに追加しました"
