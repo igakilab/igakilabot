@@ -25,11 +25,13 @@ module.exports = (robot) ->
 
   robot.respond /(.*)はい/i, (msg) ->
     card = robot.brain.get "setcard"
-    if card is null 
     boardId = TrelloTools.parseBoard msg.message.room, msg
-    msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/'+boardId)
-      .get() (err, res, body) ->
-      msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+boardId+'/'+card.id+'/'+"#{msg.message.user.name}").post() (err, res, body) ->
+    reqg = msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/'+boardId)
+      .get()
+    reqg (err, res, body) ->
+      reqp = msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+boardId+'/'+card.id+'/'+"#{msg.message.user.name}")
+        .post()
+      reqp (err, res, body) ->
         msg.send "カードをイテレーションに追加しました"
 
 
