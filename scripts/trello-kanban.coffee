@@ -20,7 +20,7 @@ module.exports = (robot) ->
     room = msg.message.room
     TrelloTools.addNumberedCard room, title, msg
     card = TrelloTools.parseCard room, title, msg
-    robot.brain.data "setcard", card
+    robot.brain.set "setcard", card
     msg.send "追加したカードを今のイテレーションに追加しますか？"
 
   robot.respond /(.*)はい/i, (msg) ->
