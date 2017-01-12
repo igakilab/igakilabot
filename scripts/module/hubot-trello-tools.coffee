@@ -174,6 +174,7 @@ class HubotTrelloTools
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
+<<<<<<< HEAD
   @cardString: (boardName, orgId, callback) ->
     unless callback? then callback = orgId; orgId = null
     client = createClient()
@@ -199,6 +200,8 @@ class HubotTrelloTools
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
+=======
+>>>>>>> origin/remaining-tasks
   @nokoriString: (boardName, orgId, callback) ->
     unless callback? then callback = orgId; orgId = null
     client = createClient()
