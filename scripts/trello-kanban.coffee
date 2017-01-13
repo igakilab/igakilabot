@@ -23,13 +23,17 @@ module.exports = (robot) ->
     robot.brain.set "setcard", card
     msg.send "追加したカードを今のイテレーションに追加しますか？"
 
-  robot.respond /(.*)はい/i, (msg) ->
+  robot.respond /はい/i, (msg) ->
     card = robot.brain.get "setcard"
     boardId = TrelloTools.parseBoard msg.message.room, msg
-    reqp = res.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+boardId+'/'+card.id+'/'+"#{msg.message.user.name}")
+    reqp = msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+"#{boardId}"+'/'+"#{card.id}"+'/'+"#{msg.message.user.name}")
       .post()
     reqp (err, res, body) ->
+      result = JSON.parse(body)
+      if result.status == "success"
         msg.send "カードをイテレーションに追加しました"
+      else
+        msg.send "エラーが発生しました"
 
 
   robot.respond /今から(.*)/i, (msg) ->
