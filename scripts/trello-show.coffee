@@ -16,6 +16,9 @@ TRELLO_API_TOKEN = "268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938
 DEFAULT_BOARD = "slackbot"
 DEBUG = false
 
+
+
+###
 getBoardByName = (client, boardName, callback) ->
   client.get "/1/members/me/boards", (err, data) ->
     if err then callback err, null; return
@@ -63,7 +66,6 @@ module.exports = (robot) ->
       console.log data
       msg.send data
 
-###
   robot.respond /タスク/, (msg) ->
     trello = new Trello TRELLO_API_KEY, TRELLO_API_TOKEN
     getBoardByName trello, DEFAULT_BOARD, (err, data) ->

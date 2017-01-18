@@ -146,6 +146,33 @@ class HubotTrelloTools
       TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
+  
+  # 看板のタスクをTrelloから取得します
+  @getKanbanTasks: (boardName, orgId, callback) ->
+    unless callback? then callback = orgId; orgId = null
+    client = createClient()
+    collectTasks = (boardId) ->
+      TrelloBoard.getInstance client, boardId, (err, board) ->
+        if err? then callback err, null; return
+        lists = board.getAllLists()
+        data = {};
+        for list in lists
+          cards = board.getCardsByListId list.id
+          data[list.name] = cards
+        data.boardId = boardId
+        callback null, data
+    getCollectionCallback = (err, collection) ->
+      if err? then callback err, null; return
+      bdata = collection.getBoardByName boardName
+      if bdata?
+        collectTasks bdata.id
+      else
+        callback "かんばんがみつかりません", null
+    if orgId?
+      TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
+    else
+      TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
+    
 
   # 看板の一覧を改行を含む文字列として返却します。
   @kanbanString: (boardName, orgId, callback) ->
@@ -199,12 +226,36 @@ class HubotTrelloTools
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
-
+  @nokoriString: (boardName, orgId, callback) ->
+    unless callback? then callback = orgId; orgId = null
+    client = createClient()
+    printBoard = (boardId, callback) ->
+      TrelloBoard.getInstance client, boardId, (err, board) ->
+        if err? then callback err, null; return
+        str = "";
+        lists = [board.getListByName 'todo', board.getListByName 'doing']
+        for list in lists
+          cards = board.getCardsByListId list.id
+          str += "--- #{list.name} (#{cards.length}) ---\n"
+          for card in cards
+            str += "> #{card.name}\n"
+        callback null, str
+    getCollectionCallback = (err, collection) ->
+      if err? then callback err, null; return
+      bdata = collection.getBoardByName boardName
+      if bdata?
+        printBoard bdata.id, callback
+      else
+        callback "かんばんがみつかりません", null
+    if orgId?
+      TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
+    else
+      TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
 
   # カードを追加します。そのとき、タスクの番号を自動的にふります。
   # すでにcardName内に番号を指定していた場合は、それを上書きしません。
-  @addNumberedCard: (boardName, cardName, params, msg) ->
-    unless msg? then msg = params; params = {}
+  @addNumberedCard: (boardName, cardName, params, msg, callback) ->
+    unless callback? then callback = msg; msg = params; params = {}
     client = createClient();
     getBoardByName client, boardName, true, msg, (board) ->
       lists = board.getAllLists();
@@ -212,6 +263,7 @@ class HubotTrelloTools
         board.createNumberedCard lists[0].id, cardName, params, (err, data) ->
           if assertError err, msg then return
           msg.send "カードを追加しました #{data.name}"
+          callback? data
       else
         msg.send "追加可能なリストがありません"
 
@@ -230,6 +282,17 @@ class HubotTrelloTools
   @parseTaskNumber: (str) ->
     return TrelloNumberedBoard.parseNumber str
 
+  @parseCard: (boardName, str, msg, callback) ->
+    client = createClient()
+    console.log msg
+    getBoardByName client, boardName, false, msg, (board) ->
+      card = board.getCardByName str
+      callback? card
+
+  @parseBoard: (str, msg) ->
+    client = createClient()
+    getBoardByName client, str, false, msg, (board) ->
+      return board.id
 
 
 module.exports = HubotTrelloTools

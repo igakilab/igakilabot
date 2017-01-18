@@ -47,7 +47,7 @@ module.exports = (robot) ->
         curr.then(-> addReaction(name, channelId, res.ts))
       , Promise.resolve())
 
-
+###
   robot.adapter.client?.on? 'raw_message', (message) ->
     robotUserId = robot.adapter.client.getUserByName(robot.name).id
     if (/^reaction_(added|removed)$/.test message.type) && (message.user isnt robotUserId)
@@ -78,6 +78,8 @@ module.exports = (robot) ->
 
     channelId = robot.adapter.client.getChannelGroupOrDMByName(msg.envelope.room)?.id
     genBtn('ok', channelId)
+
+###
 
 ###
   robot.router.post "/hubot/task_notify", (req, res) ->

@@ -21,7 +21,7 @@ module.exports = (robot) ->
     else
       res.end "messages undefined : #{req.body.room} #{req.body.message}"
 
-
+###
   robot.router.post "/hubot/task_notify", (req, res) ->
     if req.body.message? and req.body.room?
       robot.send {room:req.body.room}, req.body.message
@@ -40,3 +40,4 @@ module.exports = (robot) ->
         res.end "ダジャレを送信しました\n room:#{req.body.room}\n msg:#{msg}"
     else
       res.end "送信先を指定してください。"
+### 
