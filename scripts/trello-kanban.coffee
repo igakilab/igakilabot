@@ -12,7 +12,7 @@
 # trello api token 268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938fd65
 
 TrelloTools = require './module/hubot-trello-tools'
-urlBase = 'http://150.89.234.253:8096/'
+urlBase = process.env.TASKS_MONITOR_URL ? 'http://150.89.234.253:8096/'
 
 module.exports = (robot) ->
   robot.respond /(.*)を追加/i, (msg) ->
