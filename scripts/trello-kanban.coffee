@@ -14,6 +14,15 @@
 TrelloTools = require './module/hubot-trello-tools'
 urlBase = process.env.TASKS_MONITOR_URL ? 'http://150.89.234.253:8096/'
 
+printKanban = (tasks, msg) ->
+  message = ""
+  for listName, cards of tasks
+    if listName is "boardId" then continue
+    message += "\n--- #{listName}"
+    for card in cards
+      message += "\n> #{card.name}"
+  msg.send message
+
 module.exports = (robot) ->
   robot.respond /(.*)を追加/i, (msg) ->
     title = msg.match[1]
@@ -22,7 +31,7 @@ module.exports = (robot) ->
       reqp = msg.http(urlBase + "tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/#{card.idBoard}").get()
       reqp (err, res, body) ->
         result = JSON.parse body
-        if result.sprint isnt null
+        if result? and result.sprint isnt null
           robot.brain.set "setcard", card
           msg.send "追加したカードを今のイテレーションに追加しますか？"
 
@@ -71,7 +80,22 @@ module.exports = (robot) ->
 
   robot.respond /タスク.*表示/i, (msg) ->
     room = msg.message.room
-    TrelloTools.printKanban room, msg
+    TrelloTools.getKanbanTasks room, (err, res) ->
+      if err? then msg.send "エラー発生: #{err}"; return
+      boardId = res.boardId
+      delete res[boardId]
+      reqp = msg.http(urlBase+"tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/#{boardId}").get()
+      reqp (err, res0, body) ->
+        reply = JSON.parse body
+        if reply? and reply.sprint?
+          msg.send "現在スプリントが進行中です\n目標日: #{new Date(reply.sprint.finishDateTime)}"
+          printKanban 
+            todo: reply.tasksTodo 
+            doing: reply.tasksDoing
+            done: reply.tasksDone, msg
+        else
+          printKanban res, msg
+      
 
   robot.respond /testd/i, (msg) ->
     room = msg.message.room

@@ -146,6 +146,33 @@ class HubotTrelloTools
       TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
     else
       TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
+  
+  # 看板のタスクをTrelloから取得します
+  @getKanbanTasks: (boardName, orgId, callback) ->
+    unless callback? then callback = orgId; orgId = null
+    client = createClient()
+    collectTasks = (boardId) ->
+      TrelloBoard.getInstance client, boardId, (err, board) ->
+        if err? then callback err, null; return
+        lists = board.getAllLists()
+        data = {};
+        for list in lists
+          cards = board.getCardsByListId list.id
+          data[list.name] = cards
+        data.boardId = boardId
+        callback null, data
+    getCollectionCallback = (err, collection) ->
+      if err? then callback err, null; return
+      bdata = collection.getBoardByName boardName
+      if bdata?
+        collectTasks bdata.id
+      else
+        callback "かんばんがみつかりません", null
+    if orgId?
+      TrelloBoardCollection.getInstanceByOrganization client, orgId, getCollectionCallback
+    else
+      TrelloBoardCollection.getInstanceByMember client, getCollectionCallback
+    
 
   # 看板の一覧を改行を含む文字列として返却します。
   @kanbanString: (boardName, orgId, callback) ->
