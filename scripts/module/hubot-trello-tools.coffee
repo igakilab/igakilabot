@@ -227,8 +227,8 @@ class HubotTrelloTools
 
   # カードを追加します。そのとき、タスクの番号を自動的にふります。
   # すでにcardName内に番号を指定していた場合は、それを上書きしません。
-  @addNumberedCard: (boardName, cardName, params, msg) ->
-    unless msg? then msg = params; params = {}
+  @addNumberedCard: (boardName, cardName, params, msg, callback) ->
+    unless callback? then callback = msg; msg = params; params = {}
     client = createClient();
     getBoardByName client, boardName, true, msg, (board) ->
       lists = board.getAllLists();
@@ -236,6 +236,7 @@ class HubotTrelloTools
         board.createNumberedCard lists[0].id, cardName, params, (err, data) ->
           if assertError err, msg then return
           msg.send "カードを追加しました #{data.name}"
+          callback? data
       else
         msg.send "追加可能なリストがありません"
 
@@ -254,12 +255,12 @@ class HubotTrelloTools
   @parseTaskNumber: (str) ->
     return TrelloNumberedBoard.parseNumber str
 
-  @parseCard: (boardName, str, msg) ->
+  @parseCard: (boardName, str, msg, callback) ->
     client = createClient()
     console.log msg
     getBoardByName client, boardName, false, msg, (board) ->
       card = board.getCardByName str
-      return card
+      callback? card
 
   @parseBoard: (str, msg) ->
     client = createClient()

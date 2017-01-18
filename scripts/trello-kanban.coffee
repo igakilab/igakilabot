@@ -18,22 +18,30 @@ module.exports = (robot) ->
   robot.respond /(.*)を追加/i, (msg) ->
     title = msg.match[1]
     room = msg.message.room
-    TrelloTools.addNumberedCard room, title, msg
-    card = TrelloTools.parseCard room, title, msg
-    robot.brain.set "setcard", card
-    msg.send "追加したカードを今のイテレーションに追加しますか？"
+    TrelloTools.addNumberedCard room, title, msg, (card) ->
+      reqp = msg.http(urlBase + "tasks-monitor/dwr/jsonp/HubotApi/getCurrentSprint/#{card.idBoard}").get()
+      reqp (err, res, body) ->
+        result = JSON.parse body
+        if result.sprint isnt null
+          robot.brain.set "setcard", card
+          msg.send "追加したカードを今のイテレーションに追加しますか？"
 
   robot.respond /はい/i, (msg) ->
     card = robot.brain.get "setcard"
+    console.log card
+    unless card? then return;
+    console.log card
     boardId = TrelloTools.parseBoard msg.message.room, msg
-    reqp = msg.http(urlBase+'tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/'+"#{boardId}"+'/'+"#{card.id}"+'/'+"#{msg.message.user.name}")
+    reqp = msg.http(urlBase+"tasks-monitor/dwr/jsonp/HubotApi/addSprintCard/#{card.idBoard}/#{card.id}/#{msg.message.user.name}")
       .post()
     reqp (err, res, body) ->
       result = JSON.parse(body)
-      if result.status == "success"
+      if result.success
         msg.send "カードをイテレーションに追加しました"
+        robot.brain.set "setcard", null
       else
-        msg.send "エラーが発生しました"
+        console.log result
+        msg.send "エラーが発生しました #{result.error.message}"
 
 
   robot.respond /今から(.*)/i, (msg) ->
