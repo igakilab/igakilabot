@@ -3,7 +3,9 @@
 export HUBOT_SLACK_NAME=igakilabot
 export HUBOT_SLACK_TEAM=igakilab
 export HUBOT_SLACK_TOKEN=xoxb-42645284165-dVAK5qwkV7dR8QITY9fZYTUx
+export PORT=80
 
 export HUBOT_TRELLO_KEY=67ad72d3feb45f7a0a0b3c8e1467ac0b
 export HUBOT_TRELLO_TOKEN=268c74e1d0d1c816558655dbe438bb77bcec6a9cd205058b85340b3f8938fd65
-export PORT=80
+
+export TASKS_MONITOR_URL=http://localhost
